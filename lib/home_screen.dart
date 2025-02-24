@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:sample_shopping_app/global_variables.dart';
+import 'package:sample_shopping_app/product_card.dart';
 
-class Homescreen extends StatelessWidget {
+class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
+
+  @override
+  State<Homescreen> createState() => _HomescreenState();
+}
+
+class _HomescreenState extends State<Homescreen> {
   final List<String> filters = const [
+    "All",
     "Mobiles",
     "Laptops",
     "Electronics",
@@ -11,6 +20,13 @@ class Homescreen extends StatelessWidget {
     "Beauty",
     "Sports",
   ];
+  late String selectedFilter;
+  @override
+  void initState() {
+    super.initState();
+    selectedFilter = filters[0];
+  }
+
   @override
   Widget build(BuildContext context) {
     final border = OutlineInputBorder(
@@ -55,20 +71,43 @@ class Homescreen extends StatelessWidget {
                   final filter = filters[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Chip(
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: const Color.fromARGB(255, 248, 246, 246)),
-                          borderRadius: BorderRadius.circular(30)),
-                      label: Text(filter),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 13, horizontal: 15),
-                      backgroundColor: const Color.fromARGB(255, 248, 246, 246),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedFilter = filter;
+                        });
+                      },
+                      child: Chip(
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: const Color.fromARGB(255, 239, 237, 237),
+                            ),
+                            borderRadius: BorderRadius.circular(30)),
+                        label: Text(filter),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 13, horizontal: 15),
+                        backgroundColor: selectedFilter == filter
+                            ? Colors.amber
+                            : const Color.fromARGB(255, 239, 237, 237),
+                      ),
                     ),
                   );
                 },
                 itemCount: filters.length,
               ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                final product = products[index];
+                print(product);
+                return ProductCard(
+                    title: product['title'] as String,
+                    imageUrl: product['imageUrl'] as String,
+                    price: product['price'] as double);
+              },
+              itemCount: 2,
             ),
           )
         ],
